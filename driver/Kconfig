@@ -1,0 +1,37 @@
+menu "RISC-V npc nemu configs"
+
+config RISCV_S_MODE
+    bool "RT-Thread run in RISC-V S-Mode(supervisor mode)"
+    default n
+
+config BSP_USING_LVGL
+    bool "Enable LVGL for LCD"
+    select PKG_USING_LVGL
+    select BSP_DRV_CLCD
+    default n
+
+
+
+if BSP_USING_LVGL
+    config BSP_USING_LVGL_DEMO
+        bool "Enable LVGL demo"
+        select PKG_USING_LV_MUSIC_DEMO
+        default y
+endif
+
+config BSP_DRV_CLCD
+    bool "CLCD driver"
+    default n
+
+if BSP_DRV_CLCD
+    config BSP_LCD_WIDTH
+        int "Width of LCD panel"
+        default 400
+
+    config BSP_LCD_HEIGHT
+        int "Height of LCD panel"
+        default 300
+endif
+
+endmenu
+
