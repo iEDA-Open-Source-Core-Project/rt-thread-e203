@@ -36,8 +36,8 @@ env.CompilationDatabase()
 # env.AddPostAction()
 Export('RTT_ROOT')
 Export('rtconfig')
-rtconfig.CPU='virt64'
-rtconfig.ARCH='risc-v'
+# rtconfig.CPU='virt64'
+# rtconfig.ARCH='risc-v'
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)

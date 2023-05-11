@@ -14,7 +14,7 @@ typedef struct {
 #define MMIO_BASE 0xa0000000
 
 #define SERIAL_PORT     (MMIO_BASE + 0x00003f8)
-#define MOUSE_ADDR      (MMIO_BASE + 0x0000072)
+#define MOUSE_ADDR      (MMIO_BASE + 0x0000070)
 #define KBD_ADDR        (MMIO_BASE + 0x0000060)
 #define RTC_ADDR        (MMIO_BASE + 0x0000048)
 #define VGACTL_ADDR     (MMIO_BASE + 0x0000100)

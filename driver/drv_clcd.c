@@ -107,4 +107,4 @@ int drv_clcd_hw_init(void) {
     rt_kprintf("lcd\n");
     return 0;
 }
-INIT_DEVICE_EXPORT(drv_clcd_hw_init);
+// INIT_DEVICE_EXPORT(drv_clcd_hw_init);

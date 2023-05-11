@@ -22,12 +22,12 @@ static rt_thread_t tid2 = RT_NULL;
 
 static void low_prior_entry(void *parameter)
 {
-    rt_uint32_t count = 0, id;
+    rt_uint32_t count = 0, id = 0;
     while (1)
     {
         id = (rt_uint32_t)parameter;
-        // rt_kprintf("thread%u count: %u\n", id, count++);
-        rt_thread_mdelay(100);
+        rt_kprintf("thread%u count: %u\n", id, count++);
+        rt_thread_mdelay(20);
     }
     rt_kprintf("thread%u exit\n", id);
 }
@@ -58,6 +58,7 @@ int thread_sample(void)
     {
         rt_thread_startup(tid1);
     }
+
 
 
     tid2 = rt_thread_create("mythread2",

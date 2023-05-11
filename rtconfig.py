@@ -2,7 +2,8 @@ import os
 
 # toolchains options
 ARCH        ='risc-v'
-CPU         ='virt64'
+CPU         ='e203-itcm'
+# CPU         ='virt64'
 CROSS_TOOL  ='gcc'
 
 if os.getenv('RTT_ROOT'):
@@ -15,8 +16,10 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    # EXEC_PATH   = r'/home/leesum/workhome/riscv64-unknown-elf-toolchain/bin'
-    EXEC_PATH   = r'/opt/riscv/bin'
+    # EXEC_PATH   = r'/home/leesum/workhome/riscv32-unknown-elf-toolchain/bin'
+    EXEC_PATH   = r'/opt/riscv-multilib/bin'
+    # EXEC_PATH   = r'/opt/riscv/bin'
+    
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -24,7 +27,9 @@ else:
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-BUILD = 'debug11'
+BUILD = 'nodebug'
+# BUILD = 'debug'
+
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -39,10 +44,11 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE  = ' -fno-pic -mcmodel=medany -march=rv64im -mabi=lp64'
+    # DEVICE  = ' -fno-pic -mcmodel=medany -march=rv64im -mabi=lp64'
+    DEVICE  = ' -fno-pic -mcmodel=medany -march=rv32im -mabi=ilp32'
     CFLAGS  = DEVICE + '  -ffreestanding -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields '
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds -lc -lm '
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T gcc_hbirdv2_flash.ld -lc -lm '
     CPATH   = ''
     LPATH   = ''
 
@@ -50,7 +56,7 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O0 -ggdb -fvar-tracking'
         AFLAGS += ' -ggdb'
     else:
-        CFLAGS += ' -O3 '
+        CFLAGS += ' -O2 '
 
     CXXFLAGS = CFLAGS
 
@@ -64,7 +70,7 @@ RTIMG = os.path.abspath("rtthread.bin")
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtthread.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' \
             + SIZE + ' $TARGET \n' \
-            # + ' make -C ' + NEMU_HOME + ' run IMG='+ RTIMG
-               
 
-# $(MAKE) -C $(NPC_HOME)  run  IMG=$(IMAGE).bin
+                
+# + ' make -C ' + NPC_HOME +  ' run  IMG='+ RTIMG \
+# + ' make -C ' + NEMU_HOME + ' run IMG='+ RTIMG \

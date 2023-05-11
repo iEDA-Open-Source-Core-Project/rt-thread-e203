@@ -31,7 +31,7 @@ void primary_cpu_entry(void)
     extern void entry(void);
 
     /* disable global interrupt */
-    rt_memset(&__bss_start, 0x0, (rt_uint8_t*)&__bss_end - (rt_uint8_t*)&__bss_start);
+    // rt_memset(&__bss_start, 0x0, (rt_uint8_t*)&__bss_end - (rt_uint8_t*)&__bss_start);
 
     rt_hw_interrupt_disable();
     entry();
