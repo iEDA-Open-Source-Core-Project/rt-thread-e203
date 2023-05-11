@@ -106,10 +106,6 @@ trap_entry:
 
     /* switch interrupt stack of current cpu */
     la    sp, __stack_start__
-    addi  t1, t0, 1
-    li    t2, __STACKSIZE__
-    mul   t1, t1, t2
-    add   sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
 
     /* handle interrupt */
     call  rt_interrupt_enter

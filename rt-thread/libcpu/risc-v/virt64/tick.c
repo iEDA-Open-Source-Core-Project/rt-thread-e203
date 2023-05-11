@@ -32,6 +32,8 @@ static uint64_t get_ticks()
 int tick_isr(void)
 {
     int tick_cycles = VIRT_CLINT_TIMEBASE_FREQ / RT_TICK_PER_SECOND;
+    // int tick_cycles = 1000000;
+    // int x =           10000000
     rt_tick_increase();
 #ifdef RISCV_S_MODE
     sbi_set_timer(get_ticks() + tick_cycles);
@@ -46,24 +48,13 @@ int tick_isr(void)
 int rt_hw_tick_init(void)
 {
     unsigned long interval = VIRT_CLINT_TIMEBASE_FREQ / RT_TICK_PER_SECOND;
+    // unsigned long interval = 1000;
 
-#ifdef RISCV_S_MODE
-    /* Clear the Supervisor-Timer bit in SIE */
-    clear_csr(sie, SIP_STIP);
 
-    /* calculate the tick cycles */
-    // tick_cycles = interval * sysctl_clock_get_freq(SYSCTL_CLOCK_CPU) / CLINT_CLOCK_DIV / 1000ULL - 1;
-    tick_cycles = 40000;
-    /* Set timer */
-    sbi_set_timer(get_ticks() + tick_cycles);
-
-    /* Enable the Supervisor-Timer bit in SIE */
-    set_csr(sie, SIP_STIP);
-#else
     clear_csr(mie, MIP_MTIP);
     clear_csr(mip, MIP_MTIP);
-    *(uint64_t*)CLINT_MTIMECMP(__raw_hartid()) = *(uint64_t*)CLINT_MTIME + interval;
+    *(uint64_t*)CLINT_MTIMECMP(0) = *(uint64_t*)CLINT_MTIME + interval;
     set_csr(mie, MIP_MTIP);
-#endif
+
     return 0;
 }

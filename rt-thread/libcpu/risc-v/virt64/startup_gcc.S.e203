@@ -11,7 +11,7 @@
 _start:
     /* ===== Startup Stage 1 ===== */
     /* Disable Global Interrupt */
-    csrc SRC_XSTATUS, 0x08
+    # csrc SRC_XSTATUS, MSTATUS_MIE
     /* Disable all interrupts controlled by CSR MIE */
     csrw SRC_XIE, 0x0
 
