@@ -1,0 +1,90 @@
+#include <cpuport.h>
+
+    .section .init
+
+    .globl _start
+    .type _start,@function
+
+/**
+ * Reset Handler called on controller reset
+ */
+_start:
+    /* ===== Startup Stage 1 ===== */
+    /* Disable Global Interrupt */
+    # csrc SRC_XSTATUS, MSTATUS_MIE
+    /* Disable all interrupts controlled by CSR MIE */
+    csrw SRC_XIE, 0x0
+
+    /* Initialize GP and Stack Pointer SP */
+    .option push
+    .option norelax
+    la gp, __global_pointer$
+    .option pop
+    la sp, _sp
+
+    /*
+     * Set Trap Entry MTVEC to trap_entry
+     */
+    la t0, trap_entry
+    csrw SRC_XTVEC, t0
+
+    /* Direct Mode: All exceptions set pc to BASE. */
+    csrc SRC_XTVEC, 0x7
+
+    /* ===== Startup Stage 2 ===== */
+
+
+    # /* Enable mcycle and minstret counter */
+    # csrci CSR_MCOUNTINHIBIT, 0x5
+
+    /* ===== Startup Stage 3 ===== */
+    /*
+     * Load code section frm FLASH to ILM
+     * when code LMA is different with VMA
+     */
+    la a0, _ilm_lma
+    la a1, _ilm
+    /* If the ILM phy-address same as the logic-address, then quit */
+    beq a0, a1, 2f
+    la a2, _eilm
+    bgeu a1, a2, 2f
+
+1:
+    /* Load code section if necessary */
+    lw t0, (a0)
+    sw t0, (a1)
+    addi a0, a0, 4
+    addi a1, a1, 4
+    bltu a1, a2, 1b
+2:
+    /* Load data section */
+    la a0, _data_lma
+    la a1, _data
+    la a2, _edata
+    bgeu a1, a2, 2f
+1:
+    lw t0, (a0)
+    sw t0, (a1)
+    addi a0, a0, 4
+    addi a1, a1, 4
+    bltu a1, a2, 1b
+2:
+    /* Clear bss section */
+    la a0, __bss_start
+    la a1, _end
+    bgeu a0, a1, 2f
+1:
+    sw zero, (a0)
+    addi a0, a0, 4
+    bltu a0, a1, 1b
+2:
+
+    /* ===== Call Main Function  ===== */
+    /* argc = argv = 0 */
+    li a0, 0
+    li a1, 0
+
+    // Call entry function when using RT-Thread
+    call entry
+1:
+    j 1b
